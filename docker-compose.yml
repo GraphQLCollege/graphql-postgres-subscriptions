@@ -1,0 +1,26 @@
+version: "2.1"
+services:
+  db:
+    image: postgres:9.4
+    ports:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+  test:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db:db
+    # Unfortunately there is no reliable way to wait for postgres
+    # More info: https://github.com/docker-library/postgres/issues/146
+    command: sh -c "sleep 5 && yarn test"
+    environment:
+      DATABASE_URL: postgres://postgres:@db:5432/postgres
+      PGHOST: 'db'
+      PGUSER: 'postgres'
+      PGDATABASE: 'postgres'

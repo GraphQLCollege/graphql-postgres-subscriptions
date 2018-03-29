@@ -1,0 +1,22 @@
+{
+  "name": "graphql-postgres-subscriptions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "graphql": "^0.13.2",
+    "graphql-subscriptions": "^0.5.8",
+    "iterall": "^1.2.2",
+    "pg": "^7.4.1",
+    "pg-ipc": "^1.0.4"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3"
+  },
+  "scripts": {
+    "test": "jest --forceExit"
+  }
+}
