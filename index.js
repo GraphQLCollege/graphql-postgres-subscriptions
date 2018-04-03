@@ -1,1 +1,1 @@
-module.exports = { PostgresPubSub: require("./postgres-pubsub") };
+module.exports = { PostgresPubSub: require("./postgres-pubsub").PostgresPubSub };

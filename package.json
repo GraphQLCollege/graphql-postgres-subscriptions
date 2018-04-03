@@ -1,6 +1,6 @@
 {
   "name": "graphql-postgres-subscriptions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "license": "MIT",
   "engines": {
