@@ -12,9 +12,11 @@ This package implements the PubSubEngine Interface from the graphql-subscription
 
 ## Usage
 
-Follow the instructions in [graphql-subscriptions](https://github.com/apollographql/graphql-subscriptions).
+Example app: https://github.com/GraphQLCollege/apollo-subscriptions-example
 
-Replace `PubSub` with `PostgresPubSub`:
+First of all, follow the instructions in [graphql-subscriptions](https://github.com/apollographql/graphql-subscriptions) to add subscriptions to your app.
+
+Afterwards replace `PubSub` with `PostgresPubSub`:
 
 ```js
 // Before
