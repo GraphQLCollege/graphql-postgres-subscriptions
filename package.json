@@ -1,10 +1,14 @@
 {
   "name": "graphql-postgres-subscriptions",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
   "engines": {
     "node": ">=6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GraphQLCollege/graphql-postgres-subscriptions.git"
   },
   "dependencies": {
     "graphql": "^0.13.2",
