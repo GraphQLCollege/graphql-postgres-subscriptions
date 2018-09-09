@@ -13,12 +13,10 @@ describe("PostgresPubSub", () => {
 
   test("PostgresPubSub can subscribe when instantiated without a client", function(done) {
     const ps = new PostgresPubSub();
-    ps
-      .subscribe("a", payload => {
+    ps.subscribe("a", payload => {
         expect(payload).toEqual("test");
         done();
-      })
-      .then(() => {
+    }).then(() => {
         const succeed = ps.publish("a", "test");
         expect(succeed).toBe(true);
       });
@@ -26,12 +24,10 @@ describe("PostgresPubSub", () => {
 
   test("PostgresPubSub can subscribe and is called when events happen", function(done) {
     const ps = new PostgresPubSub({ client });
-    ps
-      .subscribe("a", payload => {
+    ps.subscribe("a", payload => {
         expect(payload).toEqual("test");
         done();
-      })
-      .then(() => {
+    }).then(() => {
         const succeed = ps.publish("a", "test");
         expect(succeed).toBe(true);
       });
@@ -41,12 +37,10 @@ describe("PostgresPubSub", () => {
     const ps = new PostgresPubSub({
       connectionString: process.env.DATABASE_URL
     });
-    ps
-      .subscribe("a", payload => {
+    ps.subscribe("a", payload => {
         expect(payload).toEqual("test");
         done();
-      })
-      .then(() => {
+    }).then(() => {
         const succeed = ps.publish("a", "test");
         expect(succeed).toBe(true);
       });
@@ -58,11 +52,9 @@ describe("PostgresPubSub", () => {
       expect(payload).toEqual("test");
       done();
     });
-    ps
-      .subscribe("a", payload => {
+    ps.subscribe("a", payload => {
         expect(payload).toEqual("test");
-      })
-      .then(() => {
+    }).then(() => {
         const succeed = ps.publish("a", "test");
         expect(succeed).toBe(true);
       });
@@ -70,11 +62,9 @@ describe("PostgresPubSub", () => {
 
   test("PostgresPubSub can unsubscribe", function(done) {
     const ps = new PostgresPubSub({ client });
-    ps
-      .subscribe("a", payload => {
+    ps.subscribe("a", payload => {
         expect(false).toBe(true); // Should not reach this point
-      })
-      .then(subId => {
+    }).then(subId => {
         ps.unsubscribe(subId);
         const succeed = ps.publish("a", "test");
         expect(succeed).toBe(true); // True because publish success is not
@@ -137,7 +127,9 @@ describe("PostgresPubSub", () => {
     const ps = new PostgresPubSub({ client });
     const iterator = ps.asyncIterator(eventName);
 
-    iterator.next().then(result => {
+    iterator
+      .next()
+      .then(result => {
       expect(result).not.toBeUndefined();
       expect(result.value).not.toBeUndefined();
       expect(result.done).toBe(false);
