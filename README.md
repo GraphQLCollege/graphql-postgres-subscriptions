@@ -51,7 +51,7 @@ await client.connect();
 const pubsub = new PostgresPubSub({ client });
 ```
 
-**Important**: Don't pass clients from `pg`'s `Pool` to `PostgresPubSub`. As [node-postgres creator states in this StackOverflow answer](<(https://stackoverflow.com/questions/8484404/what-is-the-proper-way-to-use-the-node-js-postgresql-module)>), the client needs to be around and not shared so pg can properly handle `NOTIFY` messages (which this library uses under the hood)
+**Important**: Don't pass clients from `pg`'s `Pool` to `PostgresPubSub`. As [node-postgres creator states in this StackOverflow answer](https://stackoverflow.com/questions/8484404/what-is-the-proper-way-to-use-the-node-js-postgresql-module), the client needs to be around and not shared so pg can properly handle `NOTIFY` messages (which this library uses under the hood)
 
 ## Error handling
 
