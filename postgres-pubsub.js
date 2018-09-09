@@ -17,6 +17,13 @@ class PostgresPubSub extends PubSub {
     this.subIdCounter = 0;
   }
   publish(triggerName, payload) {
+    const encodedPayload = payload != null && typeof payload !== "string" ? JSON.stringify(payload) : payload;
+
+    if (encodedPayload != null && encodedPayload.length > 8000) {
+      console.warn("payload is to large to send over postgres");
+      return false;
+    }
+
     this.ee.notify(triggerName, payload);
     return true;
   }
