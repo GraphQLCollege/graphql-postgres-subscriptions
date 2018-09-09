@@ -24,3 +24,5 @@ services:
       PGHOST: 'db'
       PGUSER: 'postgres'
       PGDATABASE: 'postgres'
+    volumes:
+      - .:/test
