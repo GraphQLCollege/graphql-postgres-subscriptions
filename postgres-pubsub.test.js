@@ -68,6 +68,23 @@ describe("PostgresPubSub", () => {
       });
   });
 
+  test("should handle null payloads", done => {
+    const ps = new PostgresPubSub({ client });
+
+    const succeed = ps.publish("null-channel", null);
+    expect(succeed).toBe(true);
+    done();
+  });
+
+  test("should handle large messages gracefully", done => {
+    const ps = new PostgresPubSub({ client });
+    let largePayload = "a".repeat(10000);
+
+    const succeed = ps.publish("a", largePayload);
+    expect(succeed).toBe(false);
+    done();
+  });
+
   test("PostgresPubSub can unsubscribe", function(done) {
     const ps = new PostgresPubSub({ client });
     ps
