@@ -20,14 +20,14 @@ Afterwards replace `PubSub` with `PostgresPubSub`:
 
 ```js
 // Before
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from "graphql-subscriptions";
 
 export const pubsub = new PubSub();
 ```
 
 ```js
 // After
-import { PostgresPubSub } from 'graphql-postgres-subscriptions';
+import { PostgresPubSub } from "graphql-postgres-subscriptions";
 
 export const pubsub = new PostgresPubSub();
 ```
@@ -43,7 +43,7 @@ You can also pass [node-postgres connection options](https://node-postgres.com/f
 You can instantiate your own `client` and pass it to `PostgresPubSub`. Like this:
 
 ```js
-import { PostgresPubSub } from 'graphql-postgres-subscriptions';
+import { PostgresPubSub } from "graphql-postgres-subscriptions";
 import { Client } from "pg";
 
 const client = new Client();
@@ -53,11 +53,29 @@ const pubsub = new PostgresPubSub({ client });
 
 **Important**: Don't pass clients from `pg`'s `Pool` to `PostgresPubSub`. As [node-postgres creator states in this StackOverflow answer](https://stackoverflow.com/questions/8484404/what-is-the-proper-way-to-use-the-node-js-postgresql-module), the client needs to be around and not shared so pg can properly handle `NOTIFY` messages (which this library uses under the hood)
 
+## Error handling
+
+`PostgresPubSub` instances emit a special event called `"error"`. This event's payload is an instance of Javascript's `Error`. You can get the error's text using `error.message`.
+
+```js
+const ps = new PostgresPubSub({ client });
+
+ps.subscribe("error", err => {
+  console.log(err.message); // -> "payload string too long"
+}).then(() => ps.publish("a", "a".repeat(9000)));
+```
+
+For example you can log all error messages (including stack traces and friends) using something like this:
+
+```js
+ps.subscribe("error", console.error);
+```
+
 ## Development
 
 This project has an integration test suite that uses [`jest`](https://facebook.github.io/jest/) to make sure everything works correctly.
 
 We use Docker to spin up a PostgreSQL instance before running the tests. To run them, type the following commands:
 
-* `docker-compose build`
-* `docker-compose run test`
+- `docker-compose build`
+- `docker-compose run test`

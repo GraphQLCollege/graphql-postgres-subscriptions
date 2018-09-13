@@ -21,7 +21,9 @@ class PostgresPubSub extends PubSub {
     return true;
   }
   subscribe(triggerName, onMessage) {
-    const callback = ({ payload }) => onMessage(payload);
+    const callback = message => {
+      onMessage(message instanceof Error ? message : message.payload);
+    };
     this.ee.on(triggerName, callback);
     this.subIdCounter = this.subIdCounter + 1;
     this.subscriptions[this.subIdCounter] = [triggerName, callback];

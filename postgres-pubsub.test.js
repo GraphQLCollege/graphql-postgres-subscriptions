@@ -14,23 +14,23 @@ describe("PostgresPubSub", () => {
   test("PostgresPubSub can subscribe when instantiated without a client", function(done) {
     const ps = new PostgresPubSub();
     ps.subscribe("a", payload => {
-        expect(payload).toEqual("test");
-        done();
+      expect(payload).toEqual("test");
+      done();
     }).then(() => {
-        const succeed = ps.publish("a", "test");
-        expect(succeed).toBe(true);
-      });
+      const succeed = ps.publish("a", "test");
+      expect(succeed).toBe(true);
+    });
   });
 
   test("PostgresPubSub can subscribe and is called when events happen", function(done) {
     const ps = new PostgresPubSub({ client });
     ps.subscribe("a", payload => {
-        expect(payload).toEqual("test");
-        done();
+      expect(payload).toEqual("test");
+      done();
     }).then(() => {
-        const succeed = ps.publish("a", "test");
-        expect(succeed).toBe(true);
-      });
+      const succeed = ps.publish("a", "test");
+      expect(succeed).toBe(true);
+    });
   });
 
   test("PostgresPubSub can subscribe when instantiated with connection options but without a client", function(done) {
@@ -38,12 +38,12 @@ describe("PostgresPubSub", () => {
       connectionString: process.env.DATABASE_URL
     });
     ps.subscribe("a", payload => {
-        expect(payload).toEqual("test");
-        done();
+      expect(payload).toEqual("test");
+      done();
     }).then(() => {
-        const succeed = ps.publish("a", "test");
-        expect(succeed).toBe(true);
-      });
+      const succeed = ps.publish("a", "test");
+      expect(succeed).toBe(true);
+    });
   });
 
   test("should send notification event after calling publish", done => {
@@ -53,24 +53,39 @@ describe("PostgresPubSub", () => {
       done();
     });
     ps.subscribe("a", payload => {
-        expect(payload).toEqual("test");
+      expect(payload).toEqual("test");
     }).then(() => {
-        const succeed = ps.publish("a", "test");
-        expect(succeed).toBe(true);
-      });
+      const succeed = ps.publish("a", "test");
+      expect(succeed).toBe(true);
+    });
   });
 
   test("PostgresPubSub can unsubscribe", function(done) {
     const ps = new PostgresPubSub({ client });
     ps.subscribe("a", payload => {
-        expect(false).toBe(true); // Should not reach this point
+      expect(false).toBe(true); // Should not reach this point
     }).then(subId => {
-        ps.unsubscribe(subId);
-        const succeed = ps.publish("a", "test");
-        expect(succeed).toBe(true); // True because publish success is not
-        // indicated by trigger having subscriptions
-        done(); // works because pubsub is synchronous
-      });
+      ps.unsubscribe(subId);
+      const succeed = ps.publish("a", "test");
+      expect(succeed).toBe(true); // True because publish success is not
+      // indicated by trigger having subscriptions
+      done(); // works because pubsub is synchronous
+    });
+  });
+
+  test("Should emit error when payload exceeds Postgres 8000 character limit", done => {
+    const ps = new PostgresPubSub({ client });
+    ps.subscribe("a", () => {
+      expect(false).toBe(true); // Should not reach this point
+      done();
+    });
+    ps.subscribe("error", err => {
+      expect(err.message).toEqual("payload string too long");
+      done();
+    }).then(() => {
+      const succeed = ps.publish("a", "a".repeat(9000));
+      expect(succeed).toBe(true);
+    });
   });
 
   test("AsyncIterator should expose valid asyncIterator for a specific event", () => {
@@ -130,10 +145,10 @@ describe("PostgresPubSub", () => {
     iterator
       .next()
       .then(result => {
-      expect(result).not.toBeUndefined();
-      expect(result.value).not.toBeUndefined();
-      expect(result.done).toBe(false);
-    });
+        expect(result).not.toBeUndefined();
+        expect(result.value).not.toBeUndefined();
+        expect(result.done).toBe(false);
+      });
 
     ps.publish(eventName, { test: true });
 
