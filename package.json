@@ -10,14 +10,17 @@
     "type": "git",
     "url": "https://github.com/GraphQLCollege/graphql-postgres-subscriptions.git"
   },
+  "peerDependencies": {
+    "graphql": "^0.13.2 || ^14.0.2"
+  },
   "dependencies": {
-    "graphql": "^0.13.2",
     "graphql-subscriptions": "^0.5.8",
     "iterall": "^1.2.2",
     "pg": "^7.4.1",
     "pg-ipc": "^1.0.4"
   },
   "devDependencies": {
+    "graphql": "^14.0.2",
     "jest": "^22.4.3"
   },
   "scripts": {
