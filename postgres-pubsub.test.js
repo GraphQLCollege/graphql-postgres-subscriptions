@@ -137,10 +137,12 @@ describe("PostgresPubSub", () => {
     ps.publish(eventName, { test: true });
   });
 
-  test("AsyncIterator should not trigger event on asyncIterator already returned", done => {
+  test("AsyncIterator should not trigger event on asyncIterator already returned", async done => {
     const eventName = "test";
     const ps = new PostgresPubSub({ client });
     const iterator = ps.asyncIterator(eventName);
+
+		const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     iterator
       .next()
@@ -148,16 +150,20 @@ describe("PostgresPubSub", () => {
         expect(result).not.toBeUndefined();
         expect(result.value).not.toBeUndefined();
         expect(result.done).toBe(false);
-      });
+			});
 
     ps.publish(eventName, { test: true });
+
+		await delay(0);
 
     iterator.next().then(result => {
       expect(result).not.toBeUndefined();
       expect(result.value).toBeUndefined();
       expect(result.done).toBe(true);
       done();
-    });
+		});
+
+		await delay(0);
 
     iterator.return();
 
