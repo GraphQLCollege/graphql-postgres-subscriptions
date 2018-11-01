@@ -142,7 +142,7 @@ describe("PostgresPubSub", () => {
     const ps = new PostgresPubSub({ client });
     const iterator = ps.asyncIterator(eventName);
 
-		const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     iterator
       .next()
@@ -150,20 +150,20 @@ describe("PostgresPubSub", () => {
         expect(result).not.toBeUndefined();
         expect(result.value).not.toBeUndefined();
         expect(result.done).toBe(false);
-			});
+      });
 
     ps.publish(eventName, { test: true });
 
-		await delay(0);
+    await delay(0);
 
     iterator.next().then(result => {
       expect(result).not.toBeUndefined();
       expect(result.value).toBeUndefined();
       expect(result.done).toBe(true);
       done();
-		});
+    });
 
-		await delay(0);
+    await delay(0);
 
     iterator.return();
 
@@ -172,8 +172,8 @@ describe("PostgresPubSub", () => {
 
   test("AsyncIterator transforms messages using commonMessageHandler", done => {
     const eventName = "test";
-		const commonMessageHandler = message => ({ transformed: message });
-		const ps = new PostgresPubSub({ client }, commonMessageHandler);
+    const commonMessageHandler = message => ({ transformed: message });
+    const ps = new PostgresPubSub({ client }, commonMessageHandler);
     const iterator = ps.asyncIterator(eventName);
 
     iterator
@@ -182,14 +182,14 @@ describe("PostgresPubSub", () => {
         expect(result).not.toBeUndefined();
         expect(result.value).toEqual({ transformed: { test: true } });
         expect(result.done).toBe(false);
-				done();
-			});
+        done();
+      });
 
     ps.publish(eventName, { test: true });
   });
 
-	test("PostgresPubSub transforms messages using commonMessageHandler", function(done) {
-		const commonMessageHandler = message => ({ transformed: message });
+  test("PostgresPubSub transforms messages using commonMessageHandler", function(done) {
+    const commonMessageHandler = message => ({ transformed: message });
     const ps = new PostgresPubSub({ client }, commonMessageHandler);
     ps.subscribe("transform", payload => {
       expect(payload).toEqual({ transformed: { test: true } });

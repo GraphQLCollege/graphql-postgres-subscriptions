@@ -6,7 +6,7 @@ const {
 } = require("./event-emitter-to-async-iterator");
 
 class PostgresPubSub extends PubSub {
-	constructor(options = {}, commonMessageHandler = message => message) {
+  constructor(options = {}, commonMessageHandler = message => message) {
     super();
     this.client = options.client || new Client(options);
     if (!options.client) {
@@ -15,7 +15,7 @@ class PostgresPubSub extends PubSub {
     this.ee = new pgIPC(this.client);
     this.subscriptions = {};
     this.subIdCounter = 0;
-		this.commonMessageHandler = commonMessageHandler;
+    this.commonMessageHandler = commonMessageHandler;
   }
   publish(triggerName, payload) {
     this.ee.notify(triggerName, payload);

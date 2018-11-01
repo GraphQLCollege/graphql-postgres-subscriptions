@@ -10,7 +10,7 @@ function eventEmitterAsyncIterator(eventEmitter, eventsNames, commonMessageHandl
   let listening = true;
 
   const pushValue = ({ payload: event }) => {
-		const value = commonMessageHandler(event);
+    const value = commonMessageHandler(event);
     if (pullQueue.length !== 0) {
       pullQueue.shift()({ value, done: false });
     } else {
