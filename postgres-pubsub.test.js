@@ -169,4 +169,35 @@ describe("PostgresPubSub", () => {
 
     ps.publish(eventName, { test: true });
   });
+
+  test("AsyncIterator transforms messages using commonMessageHandler", done => {
+    const eventName = "test";
+		const commonMessageHandler = message => ({ transformed: message });
+		const ps = new PostgresPubSub({ client }, commonMessageHandler);
+    const iterator = ps.asyncIterator(eventName);
+
+    iterator
+      .next()
+      .then(result => {
+        expect(result).not.toBeUndefined();
+        expect(result.value).toEqual({ transformed: { test: true } });
+        expect(result.done).toBe(false);
+				done();
+			});
+
+    ps.publish(eventName, { test: true });
+  });
+
+	test("PostgresPubSub transforms messages using commonMessageHandler", function(done) {
+		const commonMessageHandler = message => ({ transformed: message });
+    const ps = new PostgresPubSub({ client }, commonMessageHandler);
+    ps.subscribe("transform", payload => {
+      expect(payload).toEqual({ transformed: { test: true } });
+      done();
+    }).then(() => {
+      const succeed = ps.publish("transform", { test: true });
+      expect(succeed).toBe(true);
+    });
+  });
+
 });
