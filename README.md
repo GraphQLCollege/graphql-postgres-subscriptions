@@ -53,6 +53,28 @@ const pubsub = new PostgresPubSub({ client });
 
 **Important**: Don't pass clients from `pg`'s `Pool` to `PostgresPubSub`. As [node-postgres creator states in this StackOverflow answer](https://stackoverflow.com/questions/8484404/what-is-the-proper-way-to-use-the-node-js-postgresql-module), the client needs to be around and not shared so pg can properly handle `NOTIFY` messages (which this library uses under the hood)
 
+### commonMessageHandler
+
+The second argument to `new PostgresPubSub()` is the `commonMessageHandler`. The common message handler gets called with the received message from PostgreSQL.
+You can transform the message before it is passed to the individual filter/resolver methods of the subscribers.
+This way it is for example possible to inject one instance of a [DataLoader](https://github.com/facebook/dataloader) which can be used in all filter/resolver methods.
+
+```javascript
+const getDataLoader = () => new DataLoader(...)
+const commonMessageHandler = ({attributes: {id}, data}) => ({id, dataLoader: getDataLoader()})
+const pubsub = new PostgresPubSub({ client }, commonMessageHandler);
+```
+
+```javascript
+export const resolvers = {
+  Subscription: {
+    somethingChanged: {
+      resolve: ({id, dataLoader}) => dataLoader.load(id)
+    },
+  },
+}
+```
+
 ## Error handling
 
 `PostgresPubSub` instances emit a special event called `"error"`. This event's payload is an instance of Javascript's `Error`. You can get the error's text using `error.message`.
