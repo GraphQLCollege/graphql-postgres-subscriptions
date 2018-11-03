@@ -5,17 +5,21 @@ const {
   eventEmitterAsyncIterator
 } = require("./event-emitter-to-async-iterator");
 
+const defaultCommonMessageHandler = message => message;
+
 class PostgresPubSub extends PubSub {
-  constructor(options = {}, commonMessageHandler = message => message) {
+  constructor(options = {}) {
+    const { commonMessageHandler, client, ...pgOptions } = options;
     super();
-    this.client = options.client || new Client(options);
-    if (!options.client) {
+    this.client = client || new Client(pgOptions);
+    if (!client) {
       this.client.connect();
     }
     this.ee = new pgIPC(this.client);
     this.subscriptions = {};
     this.subIdCounter = 0;
-    this.commonMessageHandler = commonMessageHandler;
+    this.commonMessageHandler =
+      commonMessageHandler || defaultCommonMessageHandler;
   }
   publish(triggerName, payload) {
     this.ee.notify(triggerName, payload);
@@ -23,7 +27,11 @@ class PostgresPubSub extends PubSub {
   }
   subscribe(triggerName, onMessage) {
     const callback = message => {
-      onMessage(message instanceof Error ? message : this.commonMessageHandler(message.payload));
+      onMessage(
+        message instanceof Error
+          ? message
+          : this.commonMessageHandler(message.payload)
+      );
     };
     this.ee.on(triggerName, callback);
     this.subIdCounter = this.subIdCounter + 1;
@@ -36,7 +44,11 @@ class PostgresPubSub extends PubSub {
     this.ee.removeListener(triggerName, onMessage);
   }
   asyncIterator(triggers) {
-    return eventEmitterAsyncIterator(this.ee, triggers, this.commonMessageHandler);
+    return eventEmitterAsyncIterator(
+      this.ee,
+      triggers,
+      this.commonMessageHandler
+    );
   }
 }
 

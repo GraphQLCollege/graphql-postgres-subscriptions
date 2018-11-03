@@ -62,17 +62,17 @@ This way it is for example possible to inject one instance of a [DataLoader](htt
 ```javascript
 const getDataLoader = () => new DataLoader(...)
 const commonMessageHandler = ({attributes: {id}, data}) => ({id, dataLoader: getDataLoader()})
-const pubsub = new PostgresPubSub({ client }, commonMessageHandler);
+const pubsub = new PostgresPubSub({ client, commonMessageHandler });
 ```
 
 ```javascript
 export const resolvers = {
   Subscription: {
     somethingChanged: {
-      resolve: ({id, dataLoader}) => dataLoader.load(id)
-    },
-  },
-}
+      resolve: ({ id, dataLoader }) => dataLoader.load(id)
+    }
+  }
+};
 ```
 
 ## Error handling
