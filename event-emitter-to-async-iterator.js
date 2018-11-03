@@ -2,7 +2,7 @@
 const { $$asyncIterator } = require("iterall");
 const { EventEmitter } = require("events");
 
-function eventEmitterAsyncIterator(eventEmitter, eventsNames) {
+function eventEmitterAsyncIterator(eventEmitter, eventsNames, commonMessageHandler = message => message) {
   const pullQueue = [];
   const pushQueue = [];
   const eventsArray =
@@ -10,10 +10,11 @@ function eventEmitterAsyncIterator(eventEmitter, eventsNames) {
   let listening = true;
 
   const pushValue = ({ payload: event }) => {
+    const value = commonMessageHandler(event);
     if (pullQueue.length !== 0) {
-      pullQueue.shift()({ value: event, done: false });
+      pullQueue.shift()({ value, done: false });
     } else {
-      pushQueue.push(event);
+      pushQueue.push(value);
     }
   };
 

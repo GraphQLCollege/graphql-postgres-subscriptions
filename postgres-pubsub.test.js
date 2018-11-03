@@ -137,10 +137,12 @@ describe("PostgresPubSub", () => {
     ps.publish(eventName, { test: true });
   });
 
-  test("AsyncIterator should not trigger event on asyncIterator already returned", done => {
+  test("AsyncIterator should not trigger event on asyncIterator already returned", async done => {
     const eventName = "test";
     const ps = new PostgresPubSub({ client });
     const iterator = ps.asyncIterator(eventName);
+
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     iterator
       .next()
@@ -152,6 +154,8 @@ describe("PostgresPubSub", () => {
 
     ps.publish(eventName, { test: true });
 
+    await delay(0);
+
     iterator.next().then(result => {
       expect(result).not.toBeUndefined();
       expect(result.value).toBeUndefined();
@@ -159,8 +163,41 @@ describe("PostgresPubSub", () => {
       done();
     });
 
+    await delay(0);
+
     iterator.return();
 
     ps.publish(eventName, { test: true });
   });
+
+  test("AsyncIterator transforms messages using commonMessageHandler", done => {
+    const eventName = "test";
+    const commonMessageHandler = message => ({ transformed: message });
+    const ps = new PostgresPubSub({ client }, commonMessageHandler);
+    const iterator = ps.asyncIterator(eventName);
+
+    iterator
+      .next()
+      .then(result => {
+        expect(result).not.toBeUndefined();
+        expect(result.value).toEqual({ transformed: { test: true } });
+        expect(result.done).toBe(false);
+        done();
+      });
+
+    ps.publish(eventName, { test: true });
+  });
+
+  test("PostgresPubSub transforms messages using commonMessageHandler", function(done) {
+    const commonMessageHandler = message => ({ transformed: message });
+    const ps = new PostgresPubSub({ client }, commonMessageHandler);
+    ps.subscribe("transform", payload => {
+      expect(payload).toEqual({ transformed: { test: true } });
+      done();
+    }).then(() => {
+      const succeed = ps.publish("transform", { test: true });
+      expect(succeed).toBe(true);
+    });
+  });
+
 });

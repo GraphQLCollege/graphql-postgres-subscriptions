@@ -6,7 +6,7 @@ const {
 } = require("./event-emitter-to-async-iterator");
 
 class PostgresPubSub extends PubSub {
-  constructor(options = {}) {
+  constructor(options = {}, commonMessageHandler = message => message) {
     super();
     this.client = options.client || new Client(options);
     if (!options.client) {
@@ -15,6 +15,7 @@ class PostgresPubSub extends PubSub {
     this.ee = new pgIPC(this.client);
     this.subscriptions = {};
     this.subIdCounter = 0;
+    this.commonMessageHandler = commonMessageHandler;
   }
   publish(triggerName, payload) {
     this.ee.notify(triggerName, payload);
@@ -22,7 +23,7 @@ class PostgresPubSub extends PubSub {
   }
   subscribe(triggerName, onMessage) {
     const callback = message => {
-      onMessage(message instanceof Error ? message : message.payload);
+      onMessage(message instanceof Error ? message : this.commonMessageHandler(message.payload));
     };
     this.ee.on(triggerName, callback);
     this.subIdCounter = this.subIdCounter + 1;
@@ -35,7 +36,7 @@ class PostgresPubSub extends PubSub {
     this.ee.removeListener(triggerName, onMessage);
   }
   asyncIterator(triggers) {
-    return eventEmitterAsyncIterator(this.ee, triggers);
+    return eventEmitterAsyncIterator(this.ee, triggers, this.commonMessageHandler);
   }
 }
 
