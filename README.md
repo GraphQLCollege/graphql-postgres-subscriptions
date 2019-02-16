@@ -36,7 +36,7 @@ This library uses [`node-postgres`](https://github.com/brianc/node-postgres) to 
 
 You have three options:
 
-If you don's send any argument to `new PostgresPubSub()`, we'll create a `postgres` client with no arguments.
+If you don't send any argument to `new PostgresPubSub()`, we'll create a `postgres` client with no arguments.
 
 You can also pass [node-postgres connection options](https://node-postgres.com/features/connecting#programmatic) to `PostgresPubSub`.
 
