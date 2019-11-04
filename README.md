@@ -4,7 +4,7 @@
 
 A graphql subscriptions implementation using postgres and apollo's graphql-subscriptions.
 
-This package implements the PubSubEngine Interface from the graphql-subscriptions package and also the new AsyncIterator interface. It allows you to connect your subscriptions manger to a postgres based Pub Sub mechanism to support multiple subscription manager instances.
+This package implements the PubSubEngine Interface from the graphql-subscriptions package and also the new AsyncIterator interface. It allows you to connect your subscriptions manager to a postgres based Pub/Sub messaging to support multiple subscription manager instances.
 
 ## Installation
 
@@ -36,11 +36,11 @@ This library uses [`node-postgres`](https://github.com/brianc/node-postgres) to 
 
 You have three options:
 
-If you don's send any argument to `new PostgresPubSub()`, we'll create a `postgres` client with no arguments.
+1. If you don's send any argument to `new PostgresPubSub()`, we'll create a `postgres` client with no arguments.
 
-You can also pass [node-postgres connection options](https://node-postgres.com/features/connecting#programmatic) to `PostgresPubSub`.
+2. You can pass [node-postgres connection options](https://node-postgres.com/features/connecting#programmatic) to `PostgresPubSub`.
 
-You can instantiate your own `client` and pass it to `PostgresPubSub`. Like this:
+3. You can instantiate your own `client` and pass it to `PostgresPubSub`. Like this:
 
 ```js
 import { PostgresPubSub } from "graphql-postgres-subscriptions";
